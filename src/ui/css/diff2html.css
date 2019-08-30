@@ -154,7 +154,7 @@
 .line-num2 {
   box-sizing: border-box;
   float: right;
-  width: 3.5em;
+  width: auto;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 0.5em 0 0.5em;

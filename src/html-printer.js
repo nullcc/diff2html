@@ -13,9 +13,9 @@
   function HtmlPrinter() {
   }
 
-  HtmlPrinter.prototype.generateLineByLineJsonHtml = function(diffFiles, config) {
+  HtmlPrinter.prototype.generateLineByLineJsonHtml = function(diffFiles, config, coverage) {
     var lineByLinePrinter = new LineByLinePrinter(config);
-    return lineByLinePrinter.generateLineByLineJsonHtml(diffFiles);
+    return lineByLinePrinter.generateLineByLineJsonHtml(diffFiles, coverage);
   };
 
   HtmlPrinter.prototype.generateSideBySideJsonHtml = function(diffFiles, config) {

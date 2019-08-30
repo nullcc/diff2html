@@ -50,12 +50,12 @@
     return hoganUtils.render(genericTemplatesPath, 'wrapper', {'content': content});
   };
 
-  LineByLinePrinter.prototype.generateLineByLineJsonHtml = function(diffFiles) {
+  LineByLinePrinter.prototype.generateLineByLineJsonHtml = function(diffFiles, coverage) {
     var that = this;
     var htmlDiffs = diffFiles.map(function(file) {
       var diffs;
       if (file.blocks.length) {
-        diffs = that._generateFileHtml(file);
+        diffs = that._generateFileHtml(file, coverage);
       } else {
         diffs = that._generateEmptyDiff();
       }
@@ -81,7 +81,7 @@
     });
   };
 
-  LineByLinePrinter.prototype._generateFileHtml = function(file) {
+  LineByLinePrinter.prototype._generateFileHtml = function(file, coverage) {
     var that = this;
     return file.blocks.map(function(block) {
       var lines = that.makeColumnLineNumberHtml(block);
@@ -136,9 +136,29 @@
             processedOldLines +=
               that.makeLineHtml(file.isCombined, deleteType, oldLine.oldNumber, oldLine.newNumber,
                 diff.first.line, diff.first.prefix);
+
+            // get if new line has been covered
+            const fileName = file.newName;
+            const newLineNewNumber = newLine.newNumber;
+            const pathPrefix = '/Users/travis.xu/git_repo/Fiji/';
+            const filePath = `${pathPrefix}${fileName}`;
+            const fileCoverage = coverage[filePath];
+            if (!fileCoverage) {
+              newLine.covered = false;
+            } else {
+              const statementMap = fileCoverage.statementMap;
+              const s = fileCoverage.s;
+              for (const blockNo in statementMap) {
+                const block = statementMap[blockNo];
+                if (block.start.line <= newLineNewNumber && block.end.line >= newLineNewNumber) {
+                  newLine.covered = true;
+                  break;
+                }
+              }
+            }
             processedNewLines +=
               that.makeLineHtml(file.isCombined, insertType, newLine.oldNumber, newLine.newNumber,
-                diff.second.line, diff.second.prefix);
+                diff.second.line, diff.second.prefix, newLine.covered);
           }
 
           lines += processedOldLines + processedNewLines;
@@ -196,10 +216,14 @@
     return lines;
   };
 
-  LineByLinePrinter.prototype.makeLineHtml = function(isCombined, type, oldNumber, newNumber, content, possiblePrefix) {
+  LineByLinePrinter.prototype.makeLineHtml = function(isCombined, type, oldNumber, newNumber, content, possiblePrefix, newLineCovered) {
+    let newNumberContent = utils.valueOrEmpty(newNumber);
+    if (type === 'd2h-ins') {
+      newNumberContent = newLineCovered ? `${utils.valueOrEmpty(newNumber)}✅` : `${utils.valueOrEmpty(newNumber)}❌`;
+    }
     var lineNumberTemplate = hoganUtils.render(baseTemplatesPath, 'numbers', {
       oldNumber: utils.valueOrEmpty(oldNumber),
-      newNumber: utils.valueOrEmpty(newNumber)
+      newNumber: newNumberContent,
     });
 
     var lineWithoutPrefix = content;

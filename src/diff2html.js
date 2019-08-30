@@ -38,7 +38,7 @@
   /*
    * Generates the html diff. The config parameter configures the output/input formats and other options
    */
-  Diff2Html.prototype.getPrettyHtml = function(diffInput, config) {
+  Diff2Html.prototype.getPrettyHtml = function(diffInput, config, coverage) {
     var cfg = utils.safeConfig(config, defaultConfig);
 
     var diffJson = diffInput;
@@ -55,7 +55,7 @@
     if (cfg.outputFormat === 'side-by-side') {
       diffOutput = htmlPrinter.generateSideBySideJsonHtml(diffJson, cfg);
     } else {
-      diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, cfg);
+      diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, cfg, coverage);
     }
 
     return fileList + diffOutput;
