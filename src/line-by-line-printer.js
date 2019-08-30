@@ -83,6 +83,29 @@
 
   LineByLinePrinter.prototype._generateFileHtml = function(file, coverage) {
     var that = this;
+
+    function getNewLineCovered(file, newLine, coverage) {
+      if (coverage) {
+        newLine.covered = false;
+        const fileName = file.newName;
+        const newLineNewNumber = newLine.newNumber;
+        const filePath = Object.keys(coverage).find(filePath => filePath.indexOf(fileName) !== -1);
+        const fileCoverage = coverage[filePath];
+        if (!fileCoverage) {
+          return;
+        }
+        const statementMap = fileCoverage.statementMap;
+        const s = fileCoverage.s;
+        for (const blockNo in statementMap) {
+          const block = statementMap[blockNo];
+          if (block.start.line <= newLineNewNumber && block.end.line >= newLineNewNumber) {
+            newLine.covered = s[blockNo] === 1;
+            break;
+          }
+        }
+      }
+    }
+
     return file.blocks.map(function(block) {
       var lines = that.makeColumnLineNumberHtml(block);
       var oldLines = [];
@@ -135,27 +158,10 @@
 
             processedOldLines +=
               that.makeLineHtml(file.isCombined, deleteType, oldLine.oldNumber, oldLine.newNumber,
-                diff.first.line, diff.first.prefix);
+                diff.first.line, diff.first.prefix, false, oldLine.covered);
 
-            // get if new line has been covered
-            const fileName = file.newName;
-            const newLineNewNumber = newLine.newNumber;
-            const pathPrefix = '/Users/travis.xu/git_repo/Fiji/';
-            const filePath = `${pathPrefix}${fileName}`;
-            const fileCoverage = coverage[filePath];
-            if (!fileCoverage) {
-              newLine.covered = false;
-            } else {
-              const statementMap = fileCoverage.statementMap;
-              const s = fileCoverage.s;
-              for (const blockNo in statementMap) {
-                const block = statementMap[blockNo];
-                if (block.start.line <= newLineNewNumber && block.end.line >= newLineNewNumber) {
-                  newLine.covered = true;
-                  break;
-                }
-              }
-            }
+            getNewLineCovered(file, newLine, coverage);
+
             processedNewLines +=
               that.makeLineHtml(file.isCombined, insertType, newLine.oldNumber, newLine.newNumber,
                 diff.second.line, diff.second.prefix, newLine.covered);
@@ -173,15 +179,17 @@
         var line = block.lines[i];
         var escapedLine = utils.escape(line.content);
 
+        getNewLineCovered(file, line, coverage);
+
         if (line.type !== diffParser.LINE_TYPE.INSERTS &&
           (newLines.length > 0 || (line.type !== diffParser.LINE_TYPE.DELETES && oldLines.length > 0))) {
           processChangeBlock();
         }
 
         if (line.type === diffParser.LINE_TYPE.CONTEXT) {
-          lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine);
+          lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine, '', line.covered);
         } else if (line.type === diffParser.LINE_TYPE.INSERTS && !oldLines.length) {
-          lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine);
+          lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine, '', line.covered);
         } else if (line.type === diffParser.LINE_TYPE.DELETES) {
           oldLines.push(line);
         } else if (line.type === diffParser.LINE_TYPE.INSERTS && Boolean(oldLines.length)) {
@@ -218,8 +226,10 @@
 
   LineByLinePrinter.prototype.makeLineHtml = function(isCombined, type, oldNumber, newNumber, content, possiblePrefix, newLineCovered) {
     let newNumberContent = utils.valueOrEmpty(newNumber);
-    if (type === 'd2h-ins') {
-      newNumberContent = newLineCovered ? `${utils.valueOrEmpty(newNumber)}✅` : `${utils.valueOrEmpty(newNumber)}❌`;
+    if (newLineCovered !== undefined) {
+      if (type === 'd2h-ins') {
+        newNumberContent = newLineCovered ? `${utils.valueOrEmpty(newNumber)} ✅` : `${utils.valueOrEmpty(newNumber)} ❌`;
+      }
     }
     var lineNumberTemplate = hoganUtils.render(baseTemplatesPath, 'numbers', {
       oldNumber: utils.valueOrEmpty(oldNumber),
