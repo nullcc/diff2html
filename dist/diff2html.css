@@ -146,6 +146,8 @@
 }
 
 .line-num2 {
+  height: 1.2em;
+  line-height: 1.2em;
   box-sizing: border-box;
   float: right;
   width: auto;
@@ -161,7 +163,7 @@
   position: absolute;
   display: inline-block;
   background-color: #fff;
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 1);
   text-align: right;
   border: solid #eeeeee;
   border-width: 0 1px 0 1px;

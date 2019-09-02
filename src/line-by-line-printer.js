@@ -228,7 +228,7 @@
     let newNumberContent = utils.valueOrEmpty(newNumber);
     if (newLineCovered !== undefined) {
       if (type === 'd2h-ins') {
-        newNumberContent = newLineCovered ? `${utils.valueOrEmpty(newNumber)} ✅` : `${utils.valueOrEmpty(newNumber)} ❌`;
+        newNumberContent = newLineCovered ? `${utils.valueOrEmpty(newNumber)} 🔵` : `${utils.valueOrEmpty(newNumber)} 🔴`;
       }
     }
     var lineNumberTemplate = hoganUtils.render(baseTemplatesPath, 'numbers', {
