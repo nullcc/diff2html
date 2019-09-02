@@ -99,7 +99,7 @@
         for (const blockNo in statementMap) {
           const block = statementMap[blockNo];
           if (block.start.line <= newLineNewNumber && block.end.line >= newLineNewNumber) {
-            newLine.covered = s[blockNo] === 1;
+            newLine.covered = s[blockNo] > 0;
             break;
           }
         }
