@@ -1,6 +1,6 @@
 {
-  "name": "diff2html",
-  "version": "2.11.2",
+  "name": "@nullcc/diff2html",
+  "version": "3.0.0",
   "homepage": "https://diff2html.xyz",
   "description": "Fast Diff to colorized HTML",
   "keywords": [
@@ -20,13 +20,10 @@
     "difftohtml",
     "colorized"
   ],
-  "author": {
-    "name": "Rodrigo Fernandes",
-    "email": "rtfrodrigo@gmail.com"
-  },
+  "author": "Rodrigo Fernandes <rtfrodrigo@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/rtfpessoa/diff2html.git"
+    "url": "git+https://github.com/rtfpessoa/diff2html.git"
   },
   "bugs": {
     "url": "https://www.github.com/rtfpessoa/diff2html/issues"
@@ -83,5 +80,9 @@
     "src",
     "dist",
     "typescript"
-  ]
+  ],
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  }
 }
