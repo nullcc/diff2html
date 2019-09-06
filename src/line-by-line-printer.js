@@ -218,7 +218,7 @@
     for (var j = 0; j < newLines.length; j++) {
       var newLine = newLines[j];
       var newEscapedLine = utils.escape(newLine.content);
-      lines += this.makeLineHtml(isCombined, newLine.type, newLine.oldNumber, newLine.newNumber, newEscapedLine);
+      lines += this.makeLineHtml(isCombined, newLine.type, newLine.oldNumber, newLine.newNumber, newEscapedLine, '', newLine.coverageStatus);
     }
 
     return lines;
