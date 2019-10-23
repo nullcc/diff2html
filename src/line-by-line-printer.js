@@ -228,11 +228,13 @@
     let newNumberContent = utils.valueOrEmpty(newNumber);
     if (newLineCoverageStatus !== undefined) {
       if (type === 'd2h-ins') {
+        global.diffNewLines += 1;
         switch (newLineCoverageStatus) {
           case 0:
             newNumberContent = `${utils.valueOrEmpty(newNumber)} 🔴`;
             break;
           case 1:
+            global.coveredDiffNewLines += 1;
             newNumberContent = `${utils.valueOrEmpty(newNumber)} 🔵`;
             break;
           case 2:

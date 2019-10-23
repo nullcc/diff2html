@@ -5,6 +5,9 @@
  *
  */
 
+global.diffNewLines = 0;
+global.coveredDiffNewLines = 0;
+
 (function() {
   var diffParser = require('./diff-parser.js').DiffParser;
   var htmlPrinter = require('./html-printer.js').HtmlPrinter;
@@ -46,16 +49,16 @@
       diffJson = diffParser.generateDiffJson(diffInput, cfg);
     }
 
-    var fileList = '';
-    if (cfg.showFiles === true) {
-      fileList = htmlPrinter.generateFileListSummary(diffJson, cfg);
-    }
-
     var diffOutput = '';
     if (cfg.outputFormat === 'side-by-side') {
       diffOutput = htmlPrinter.generateSideBySideJsonHtml(diffJson, cfg);
     } else {
       diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, cfg, coverage);
+    }
+
+    var fileList = '';
+    if (cfg.showFiles === true) {
+      fileList = htmlPrinter.generateFileListSummary(diffJson, cfg);
     }
 
     return fileList + diffOutput;
