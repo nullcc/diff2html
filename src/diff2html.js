@@ -5,8 +5,8 @@
  *
  */
 
-global.diffNewLines = 0;
-global.coveredDiffNewLines = 0;
+global.diffStatementNewLines = 0;
+global.coveredDiffStatementNewLines = 0;
 
 (function() {
   var diffParser = require('./diff-parser.js').DiffParser;
@@ -41,7 +41,7 @@ global.coveredDiffNewLines = 0;
   /*
    * Generates the html diff. The config parameter configures the output/input formats and other options
    */
-  Diff2Html.prototype.getPrettyHtml = function(diffInput, config, coverage) {
+  Diff2Html.prototype.getPrettyHtml = function(diffInput, config, coverage, coverageFilePatterns) {
     var cfg = utils.safeConfig(config, defaultConfig);
 
     var diffJson = diffInput;
@@ -53,7 +53,7 @@ global.coveredDiffNewLines = 0;
     if (cfg.outputFormat === 'side-by-side') {
       diffOutput = htmlPrinter.generateSideBySideJsonHtml(diffJson, cfg);
     } else {
-      diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, cfg, coverage);
+      diffOutput = htmlPrinter.generateLineByLineJsonHtml(diffJson, cfg, coverage, coverageFilePatterns);
     }
 
     var fileList = '';

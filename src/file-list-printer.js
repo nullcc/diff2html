@@ -42,9 +42,9 @@
     return hoganUtils.render(baseTemplatesPath, 'wrapper', {
       filesNumber: diffFiles.length,
       files: files,
-      diffNewLines: global.diffNewLines,
-      coveredDiffNewLines: global.coveredDiffNewLines,
-      diffCoverageRate: global.diffNewLines === 0 ? 0: (global.coveredDiffNewLines / global.diffNewLines * 100).toFixed(2),
+      diffStatementNewLines: global.diffStatementNewLines,
+      coveredDiffStatementNewLines: global.coveredDiffStatementNewLines,
+      diffStatementCoverageRate: global.diffStatementNewLines === 0 ? 0: (global.coveredDiffStatementNewLines / global.diffStatementNewLines * 100).toFixed(2),
     });
   };
 
