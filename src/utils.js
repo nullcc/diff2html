@@ -18,7 +18,9 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;');
+      .replace(/\//g, '&#x2F;')
+      .replace(/\$/g, '&#x24;')
+      .replace(/`/g, '&#x60;');
   };
 
   Utils.prototype.startsWith = function(str, start) {
