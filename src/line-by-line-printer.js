@@ -87,17 +87,19 @@
     var that = this;
 
     function getNewLineCoverageStatus(file, newLine, coverage) {
+      if (that._isExcludeFile(file)) {
+        return;
+      }
       if (coverage) {
         newLine.coverageStatus = 2;  // 0: uncovered 1: covered 2: non executable line
+        if (newLine.content.substr(1).trim().length === 0) { // ignore empty added row
+          return;
+        }
         const fileName = file.newName;
         const newLineNewNumber = newLine.newNumber;
         const filePath = Object.keys(coverage).find(filePath => filePath.indexOf(fileName) !== -1);
         const fileCoverage = coverage[filePath];
         if (!fileCoverage) {
-          return;
-        }
-
-        if (that._isExcludeFile(file)) {
           return;
         }
         const statementMap = fileCoverage.statementMap;
@@ -111,6 +113,10 @@
         }
         if (newLine.coverageStatus === 1) {
           that._increaseCoveredDiffStatementNewLines(file, newLine.content);
+          that._increaseDiffStatementNewLines(file, newLine.content);
+        }
+        if (newLine.coverageStatus === 0) {
+          that._increaseDiffStatementNewLines(file, newLine.content);
         }
       }
     }
@@ -167,7 +173,7 @@
 
             processedOldLines +=
               that.makeLineHtml(file.isCombined, deleteType, oldLine.oldNumber, oldLine.newNumber,
-                diff.first.line, diff.first.prefix, false, oldLine.coverageStatus);
+                diff.first.line, diff.first.prefix, oldLine.coverageStatus);
 
             processedNewLines +=
               that.makeLineHtml(file.isCombined, insertType, newLine.oldNumber, newLine.newNumber,
@@ -194,13 +200,11 @@
         if (line.type === diffParser.LINE_TYPE.CONTEXT) {
           lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine, '', line.coverageStatus);
         } else if (line.type === diffParser.LINE_TYPE.INSERTS && !oldLines.length) {
-          that._increaseDiffStatementNewLines(file, line.content);
           getNewLineCoverageStatus(file, line, coverage);
           lines += that.makeLineHtml(file.isCombined, line.type, line.oldNumber, line.newNumber, escapedLine, '', line.coverageStatus);
         } else if (line.type === diffParser.LINE_TYPE.DELETES) {
           oldLines.push(line);
         } else if (line.type === diffParser.LINE_TYPE.INSERTS && Boolean(oldLines.length)) {
-          that._increaseDiffStatementNewLines(file, line.content);
           getNewLineCoverageStatus(file, line, coverage);
           newLines.push(line);
         } else {
